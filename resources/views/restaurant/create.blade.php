@@ -34,7 +34,7 @@
                                 <div class="card-content collapse show">
                                     <div class="card-body">
                                         <form class="form" method="post"
-                                              action="{{ route('restaurant.store') }}" enctype="multipart/form-data">
+                                              action="{{ route('restaurant.store') }}" name="create_form" onsubmit="return validateForm()"  enctype="multipart/form-data">
                                             @csrf
                                             <div class="form-body">
                                                 <div class="row pl-1 pr-1">
@@ -43,9 +43,11 @@
                                                         <div class="form-group">
                                                             <label
                                                                 for="name">{{ __('main.name_ar') }}</label>
-                                                            <input type="text" id="RestaurantName" class="form-control"
+                                                            <input type="text" id="name_ar" class="form-control"
                                                                    placeholder="{{ __('main.name_ar') }}"
                                                                    name="name_ar">
+                                                            <small class="form-text text-danger" id="error_name_ar" style="display: none">
+                                                                <strong>{{ __('main.restaurant_name_ar_messages') }}</strong></small>
                                                             @error('name_ar')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -57,9 +59,11 @@
                                                         <div class="form-group">
                                                             <label
                                                                 for="name">{{ __('main.name_en') }}</label>
-                                                            <input type="text" id="RestaurantName" class="form-control"
+                                                            <input type="text" id="name_en" class="form-control"
                                                                    placeholder="{{ __('main.name_en') }}"
                                                                    name="name_en">
+                                                            <small class="form-text text-danger" id="error_name_en" style="display: none">
+                                                                <strong>{{ __('main.restaurant_name_en_messages') }}</strong></small>
                                                             @error('name_en')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -75,6 +79,8 @@
                                                                 for="description_ar">{{ __('main.description_ar') }}</label>
                                                             <textarea style="resize: none" class="form-control" id="description_ar" rows="3" name="description_ar"
                                                                       placeholder="{{ __('main.description_ar') }}"></textarea>
+                                                            <small class="form-text text-danger" id="error_description_ar" style="display: none">
+                                                                <strong>{{ __('main.restaurant_description_ar_messages') }}</strong></small>
                                                             @error('description_ar')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -87,6 +93,8 @@
                                                             <label for="description_en">{{ __('main.description_en') }}</label>
                                                             <textarea style="resize: none" class="form-control" id="description_en" rows="3" name="description_en"
                                                                       placeholder="{{ __('main.description_en') }}"></textarea>
+                                                            <small class="form-text text-danger" id="error_description_en" style="display: none">
+                                                                <strong>{{ __('main.restaurant_description_en_messages') }}</strong></small>
                                                             @error('description_en')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -101,40 +109,42 @@
                                                         <fieldset class="form-group">
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input"
-                                                                       id="logo" name="logo" accept="image/*">
+                                                                       id="logo" name="logo" accept=".png,.jpg,.gif">
                                                                 <label class="custom-file-label"
-                                                                       for="inputGroupFile01">{{ __('main.choose-logo') }}</label>
+                                                                       id="logo_name"  for="inputGroupFile01">{{ __('main.choose-logo') }}</label>
                                                                 @error('logo')
                                                                 <small
                                                                     class="form-text text-danger">{{ $message }}</small>
                                                                 @enderror
-                                                                @if(Session::has('uploaded'))
-                                                                    <small class="form-text text-success"><strong>{{Session::get('uploaded')}}</strong></small>
-                                                                @elseif(Session::has('not_uploaded'))
-                                                                    <small class="form-text text-danger"><strong>{{Session::get('not_uploaded')}}</strong></small>
-                                                                @endif
                                                             </div>
+                                                            <small class="form-text text-danger" id="error_logo" style="display: none">
+                                                                <strong>{{ __('main.logo_messages') }}</strong></small>
+                                                            @if(Session::has('uploaded'))
+                                                                <small class="form-text text-success"><strong>{{Session::get('uploaded')}}</strong></small>
+                                                            @elseif(Session::has('not_uploaded'))
+                                                                <small class="form-text text-danger"><strong>{{Session::get('not_uploaded')}}</strong></small>
+                                                            @endif
                                                         </fieldset>
                                                     </div>
                                                     <div class="col-md-6">
                                                         {{-- cover image Field --}}
-                                                        <label for="cover_image">{{ __('main.cover_image') }}</label>
+                                                        <label for="logo">{{ __('main.cover_image_Optional') }}</label>
                                                         <fieldset class="form-group">
                                                             <div class="custom-file">
                                                                 <input type="file" class="custom-file-input"
-                                                                       id="cover_image" name="cover_image" accept="image/*">
+                                                                       id="cover_image" name="cover_image" accept=".png,.jpg,.gif">
                                                                 <label class="custom-file-label"
-                                                                       for="inputGroupFile01">{{ __('main.choose-cover_image') }}</label>
+                                                                       id="cover_image_name"   for="inputGroupFile01">{{ __('main.choose-cover_image') }}</label>
                                                                 @error('cover_image')
                                                                 <small
                                                                     class="form-text text-danger">{{ $message }}</small>
                                                                 @enderror
-                                                                @if(Session::has('uploaded_2'))
-                                                                    <small class="form-text text-success"><strong>{{Session::get('uploaded')}}</strong></small>
-                                                                @elseif(Session::has('not_uploaded_2'))
-                                                                    <small class="form-text text-danger"><strong>{{Session::get('not_uploaded')}}</strong></small>
-                                                                @endif
                                                             </div>
+                                                            @if(Session::has('uploaded_2'))
+                                                                <small class="form-text text-success"><strong>{{Session::get('uploaded')}}</strong></small>
+                                                            @elseif(Session::has('not_uploaded_2'))
+                                                                <small class="form-text text-danger"><strong>{{Session::get('not_uploaded')}}</strong></small>
+                                                            @endif
                                                         </fieldset>
                                                     </div>
                                                 </div>
@@ -171,12 +181,14 @@
                                                                             {{$category->name_ar}}
                                                                         @endif</option>
                                                                     @endforeach
-
                                                                 </select>
+
                                                             @error('category_id')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
                                                             @enderror
+                                                            <small class="form-text text-danger" id="error_category" style="display: none">
+                                                                <strong>{{ __('main.category_id_messages') }}</strong></small>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -198,6 +210,8 @@
                                                             <input type="text" id="latitude" class="form-control"
                                                                    placeholder="{{ __('main.latitude') }}"
                                                                    name="latitude">
+                                                            <small class="form-text text-danger" id="error_latitude" style="display: none">
+                                                                <strong>{{ __('main.latitude_messages') }}</strong></small>
                                                             @error('latitude')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -212,6 +226,8 @@
                                                             <input type="text" id="longitude" class="form-control"
                                                                    placeholder="{{ __('main.longitude') }}"
                                                                    name="longitude">
+                                                            <small class="form-text text-danger" id="error_longitude" style="display: none">
+                                                                <strong>{{ __('main.longitude_messages') }}</strong></small>
                                                             @error('longitude')
                                                             <small
                                                                 class="form-text text-danger">{{ $message }}</small>
@@ -462,6 +478,7 @@
             </div>
         </div>
     </div>
+    @include('includes.restaurantFromValidation')
     {{--the script is for map--}}
     <script>
         let map;
@@ -496,6 +513,18 @@
 
 @endsection
 @section('search js')
+    <script>
+        $('input[name="logo"]').change(function(e){
+            var fileName = e.target.files[0].name;
+            document.getElementById('logo_name').innerHTML
+                = fileName;
+        });
+        $('input[name="cover_image"]').change(function(e){
+            var fileName = e.target.files[0].name;
+            document.getElementById('cover_image_name').innerHTML
+                = fileName;
+        });
+    </script>
     {{--create--}}
     @if (Session::has('create_msg_Restaurant'))
         @if (App::getLocale() == 'ar')

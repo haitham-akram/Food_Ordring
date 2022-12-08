@@ -8,6 +8,7 @@ use App\Http\Requests\RestaurantCategoryRequest;
 use App\Http\Requests\RestaurantRequest;
 use App\Models\RestaurantCategory;
 use App\Models\RestaurantMeal;
+use App\Models\RestaurantMealAddOnElements;
 use App\Models\RestaurantMealAddOnLists;
 use App\Models\RestaurantMealAddOns;
 use App\Models\RestaurantType;
@@ -74,48 +75,83 @@ class RestaurantController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(RestaurantRequest $request)
+    public function store(Request $request)
     {
+        $cover_image_request = $request->cover_image;
         $types_id= $request->category_id;
         $logo = $this->call_uploaded_photo($request,'logo');
-        $cover_image = $this->call_uploaded_photo($request,'cover_image');
-        Restaurant::create([
-            'name_ar'=>$request->name_ar,
-            'name_en'=>$request->name_en,
-            'description_ar'=>$request->description_ar,
-            'description_en'=>$request->description_en,
-            'logo'=>$logo,
-            'cover_image'=>$cover_image,
-            'status'=>$request->status,
-            'latitude'=>$request->latitude,
-            'longitude'=>$request->longitude,
-            'monday_open_at'=>$request->monday_open_at,
-            'monday_close_at'=>$request->monday_end_at,
-            'tuesday_open_at'=>$request->tuesday_open_at,
-            'tuesday_close_at'=>$request->tuesday_end_at,
-            'wednesday_open_at'=>$request->wednesday_open_at,
-            'wednesday_close_at'=>$request->wednesday_end_at,
-            'thursday_open_at'=>$request->thursday_open_at,
-            'thursday_close_at'=>$request->thursday_end_at,
-            'friday_open_at'=>$request->friday_open_at,
-            'friday_close_at'=>$request->friday_end_at,
-            'saturday_open_at'=>$request->saturday_open_at,
-            'saturday_close_at'=>$request->saturday_end_at,
-            'sunday_open_at'=>$request->sunday_open_at,
-            'sunday_close_at'=>$request->sunday_end_at,
-        ]);
-        if($logo){
-            Session::flash('uploaded', __('main.uploaded'));
+        if(!$cover_image_request){
+            $restaurant = Restaurant::create([
+                'name_ar'=>$request->name_ar,
+                'name_en'=>$request->name_en,
+                'description_ar'=>$request->description_ar,
+                'description_en'=>$request->description_en,
+                'logo'=>$logo,
+                'cover_image'=>null,
+                'status'=>$request->status,
+                'latitude'=>$request->latitude,
+                'longitude'=>$request->longitude,
+                'monday_open_at'=>$request->monday_open_at,
+                'monday_close_at'=>$request->monday_end_at,
+                'tuesday_open_at'=>$request->tuesday_open_at,
+                'tuesday_close_at'=>$request->tuesday_end_at,
+                'wednesday_open_at'=>$request->wednesday_open_at,
+                'wednesday_close_at'=>$request->wednesday_end_at,
+                'thursday_open_at'=>$request->thursday_open_at,
+                'thursday_close_at'=>$request->thursday_end_at,
+                'friday_open_at'=>$request->friday_open_at,
+                'friday_close_at'=>$request->friday_end_at,
+                'saturday_open_at'=>$request->saturday_open_at,
+                'saturday_close_at'=>$request->saturday_end_at,
+                'sunday_open_at'=>$request->sunday_open_at,
+                'sunday_close_at'=>$request->sunday_end_at,
+            ]);
+            if($logo){
+                Session::flash('uploaded', __('main.uploaded'));
+            }else{
+                Session::flash('not_uploaded',  __('main.not_uploaded'));
+            }
         }else{
-            Session::flash('not_uploaded',  __('main.not_uploaded'));
+            $cover_image = $this->call_uploaded_photo($request,'cover_image');
+            $restaurant = Restaurant::create([
+                'name_ar'=>$request->name_ar,
+                'name_en'=>$request->name_en,
+                'description_ar'=>$request->description_ar,
+                'description_en'=>$request->description_en,
+                'logo'=>$logo,
+                'cover_image'=>$cover_image,
+                'status'=>$request->status,
+                'latitude'=>$request->latitude,
+                'longitude'=>$request->longitude,
+                'monday_open_at'=>$request->monday_open_at,
+                'monday_close_at'=>$request->monday_end_at,
+                'tuesday_open_at'=>$request->tuesday_open_at,
+                'tuesday_close_at'=>$request->tuesday_end_at,
+                'wednesday_open_at'=>$request->wednesday_open_at,
+                'wednesday_close_at'=>$request->wednesday_end_at,
+                'thursday_open_at'=>$request->thursday_open_at,
+                'thursday_close_at'=>$request->thursday_end_at,
+                'friday_open_at'=>$request->friday_open_at,
+                'friday_close_at'=>$request->friday_end_at,
+                'saturday_open_at'=>$request->saturday_open_at,
+                'saturday_close_at'=>$request->saturday_end_at,
+                'sunday_open_at'=>$request->sunday_open_at,
+                'sunday_close_at'=>$request->sunday_end_at,
+            ]);
+            if($logo){
+                Session::flash('uploaded', __('main.uploaded'));
+            }else{
+                Session::flash('not_uploaded',  __('main.not_uploaded'));
+            }
+            if($cover_image){
+                Session::flash('uploaded_2', __('main.uploaded'));
+            }else{
+                Session::flash('not_uploaded_2',  __('main.not_uploaded'));
+            }
         }
-        if($cover_image){
-            Session::flash('uploaded_2', __('main.uploaded'));
-        }else{
-            Session::flash('not_uploaded_2',  __('main.not_uploaded'));
-        }
+
+
 //       store restaurant category  'status'=>$request->category_id[], you need to for loop about it and store it
-        $restaurant = Restaurant::latest('created_at')->first();
         foreach ($types_id as $type_id){
         RestaurantType::create([
             'resturant_id'=>$restaurant->id,
@@ -152,7 +188,7 @@ class RestaurantController extends Controller
      * @param int $id
      * @return RedirectResponse
      */
-    public function update(Restaurant_Edit_Request $request, $id)
+    public function update(Request $request, $id)
     {
         $restaurant = Restaurant::where('id','=',$id)->first();
 //            dd($request->logo,$request->cover_image);
@@ -256,11 +292,36 @@ class RestaurantController extends Controller
             }else{
                 Session::flash('not_uploaded_2',  __('main.not_uploaded'));
             }
+        }else{
+            $restaurant->update([
+                'name_ar'=>$request->name_ar,
+                'name_en'=>$request->name_en,
+                'description_ar'=>$request->description_ar,
+                'description_en'=>$request->description_en,
+                'status'=>$request->status,
+                'latitude'=>$request->latitude,
+                'longitude'=>$request->longitude,
+                'monday_open_at'=>$request->monday_open_at,
+                'monday_close_at'=>$request->monday_end_at,
+                'tuesday_open_at'=>$request->tuesday_open_at,
+                'tuesday_close_at'=>$request->tuesday_end_at,
+                'wednesday_open_at'=>$request->wednesday_open_at,
+                'wednesday_close_at'=>$request->wednesday_end_at,
+                'thursday_open_at'=>$request->thursday_open_at,
+                'thursday_close_at'=>$request->thursday_end_at,
+                'friday_open_at'=>$request->friday_open_at,
+                'friday_close_at'=>$request->friday_end_at,
+                'saturday_open_at'=>$request->saturday_open_at,
+                'saturday_close_at'=>$request->saturday_end_at,
+                'sunday_open_at'=>$request->sunday_open_at,
+                'sunday_close_at'=>$request->sunday_end_at,
+            ]);
         }
         $types_id= $request->category_id;
         $RestaurantTypes = RestaurantType::where('resturant_id',$id)->get();
         Foreach($RestaurantTypes as $restaurantType){
-            $restaurantType->delete();
+            $restaurantType->forceDelete();
+//            $restaurantType->delete();
         }
 
         foreach ($types_id as $type_id) {
@@ -306,7 +367,14 @@ class RestaurantController extends Controller
         $AddsOnLists = RestaurantMealAddOnLists::where('resturant_id','=',$id)->get();
         //get adds on list for the restaurant and delete it.
         foreach($AddsOnLists as $AddsOnList){
+            // we need to delete adds on element.
+            $addsOnElements = RestaurantMealAddOnElements::where('restaurant_add_on_list_id','=',$AddsOnList->id)->get();
+            foreach ($addsOnElements as $addsOnElement)  $addsOnElement->delete();
             $AddsOnList->delete();
+        }
+        $RestaurantTypes = RestaurantType::where('resturant_id',$id)->get();
+        Foreach($RestaurantTypes as $restaurantType){
+            $restaurantType->delete();
         }
         // finally  delete restaurant.
         $restaurant->delete();

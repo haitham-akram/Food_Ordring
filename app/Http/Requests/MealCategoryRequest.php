@@ -26,7 +26,6 @@ class MealCategoryRequest extends FormRequest
         return [
             'name_ar'=>'required',
             'name_en'=>'required',
-            'restaurant_id'=>'required',
         ];
 
     }
@@ -35,8 +34,6 @@ class MealCategoryRequest extends FormRequest
         return [
             'name_ar.required'=>__('main.category_name_ar_messages'),
             'name_en.required'=>__('main.category_name_en_messages'),
-            'restaurant_id.required'=>__('main.restaurant_id_messages'),
-
 
         ];
     }

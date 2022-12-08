@@ -28,7 +28,7 @@
                         class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i
                             class="ft-menu font-large-1"></i></a></li>
                 <li class="nav-item mr-auto">
-                    <a class="navbar-brand" href="{{ route('Home') }}">
+                    <a class="navbar-brand" href="{{ route('home') }}">
                         <img class="brand-logo" alt="logo"
                              src="{{ asset('app-assets/images/logo/120.120.png') }}">
                         @if (App::getLocale() == 'en')
@@ -113,8 +113,8 @@
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             {{-- Dashboard --}}
-            <li class=" @if (Route::currentRouteName() == 'admin_index') active @endif">
-                <a href="{{ route('Home') }}"><i class="la la-home"></i><span class="menu-title"
+            <li class=" @if (Route::currentRouteName() == 'home') active @endif">
+                <a href="{{ route('home') }}"><i class="la la-home"></i><span class="menu-title"
                                                                                      data-i18n="nav.dash.main">{{ __('main.Dashboard') }}</span></a>
             </li>
 
@@ -150,43 +150,35 @@
                     </li>
                 </ul>
             </li>
-
-            {{-- Meals Category --}}
-            <li class=" nav-item"><a href="#"><i class="la la-list"></i><span class="menu-title"
-                                                                                 data-i18n="nav.Meals.main">{{ __('main.Meal-category') }}</span></a>
+            {{-- orders section--}}
+            <li class=" navigation-header">
+                <span data-i18n="nav.category.People">{{ __('main.orders-section') }}</span><i
+                    class="la la-ellipsis-h ft-minus" data-toggle="tooltip" data-placement="right"
+                    data-original-title="orders"></i>
+            </li>
+            {{-- Orders --}}
+            <li class=" nav-item"><a href="#"><i class="la la-shopping-cart"></i><span class="menu-title"
+                                                                                  data-i18n="nav.orders.main">{{ __('main.Orders') }}</span></a>
                 <ul class="menu-content">
-                    <li class="@if (Route::currentRouteName() == 'meal.category.index') active @endif"><a class="menu-item"
-                                                                                                     href="{{ route('meal.category.index') }}"
-                                                                                                     data-i18n="nav.Meals.add">{{ __('main.Meal-category-list') }}</a>
+                    <li class="@if (Route::currentRouteName() == 'restaurant.order') active @endif"><a class="menu-item"
+                                                                                                      href="{{route('restaurant.order')}}"
+                                                                                                      data-i18n="nav.restaurants.list">{{ __('main.order-list') }}</a>
                     </li>
                 </ul>
             </li>
-
-            {{-- Meals --}}
-            <li class=" nav-item"><a href="#"><i class="la la-cutlery"></i><span class="menu-title"
-                                                                                 data-i18n="nav.Meals.main">{{ __('main.Meals') }}</span></a>
-                <ul class="menu-content">
-                    <li class="@if (Route::currentRouteName() == 'meal.create') active @endif"><a class="menu-item"
-                                                                                                     href="{{ route('meal.create') }}"
-                                                                                                     data-i18n="nav.Meals.add">{{ __('main.add-meal') }}</a>
-                    </li>
-                    <li class="@if (Route::currentRouteName() == 'meal.index') active @endif"><a class="menu-item"
-                                                                                               href="{{ route('meal.index') }}"
-                                                                                               data-i18n="nav.Meals.list">{{ __('main.meals-list') }}</a>
-                    </li>
-                </ul>
+            {{-- banners section--}}
+            <li class=" navigation-header">
+                <span data-i18n="nav.category.People">{{ __('main.banners-section') }}</span><i
+                    class="la la-ellipsis-h ft-minus" data-toggle="tooltip" data-placement="right"
+                    data-original-title="banners"></i>
             </li>
-            {{-- Adds-on --}}
-            <li class=" nav-item"><a href="#"><i class="la la-plus-square-o"></i><span class="menu-title"
-                                                                                 data-i18n="nav.Meals.main">{{ __('main.Adds-on') }}</span></a>
+            {{--banners--}}
+            <li class="nav-item"><a href="#"><i class="la la-photo"></i><span class="menu-title"
+                                                                              data-i18n="nav.orders.main">{{ __('main.banners') }}</span></a>
                 <ul class="menu-content">
-                    <li class="@if (Route::currentRouteName() == 'RM_create_meal') active @endif"><a class="menu-item"
-                                                                                                     href="{{ route('Home') }}"
-                                                                                                     data-i18n="nav.Meals.add">{{ __('main.add-adds-on') }}</a>
-                    </li>
-                    <li class="@if (Route::currentRouteName() == 'RM_Meals') active @endif"><a class="menu-item"
-                                                                                               href="{{ route('Home') }}"
-                                                                                               data-i18n="nav.Meals.list">{{ __('main.Adds-on-list') }}</a>
+                    <li class="@if (Route::currentRouteName() == 'banner.index') active @endif"><a class="menu-item"
+                                                                                                   href="{{route('banner.index')}}"
+                                                                                                   data-i18n="nav.banners-list">{{ __('main.banners-list') }}</a>
                     </li>
                 </ul>
             </li>

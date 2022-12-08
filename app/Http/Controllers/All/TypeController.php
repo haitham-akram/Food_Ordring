@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RestaurantCategoryRequest;
 use App\Models\Restaurant;
 use App\Models\RestaurantCategory;
+use App\Models\RestaurantType;
 use App\Models\Type;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ class TypeController extends Controller
      * @param RestaurantCategoryRequest $request
      * @return RedirectResponse
      */
-    public function store(RestaurantCategoryRequest $request)
+    public function store(Request $request)
     {
        Type::create([
            'name_ar'=>$request->name_ar,
@@ -70,7 +71,7 @@ class TypeController extends Controller
     public function destroy($id)
     {
         $category = Type::where('id','=',$id)->first();
-        $restaurants_under_category = RestaurantCategory::where('resturant_id','=',$id)->get();
+        $restaurants_under_category = RestaurantType::where('type_id','=',$id)->first();
         if (!$category){
             return redirect()->back()->with(['success_title' => __('main.success_title'),
                 'update_msg_type' => __('main.update_msg_type')]);

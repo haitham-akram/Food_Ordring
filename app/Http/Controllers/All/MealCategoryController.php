@@ -13,17 +13,21 @@ class MealCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     *@param $id int
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(int $id)
     {
-        $restaurants = Restaurant::select(['id','name_ar','name_en'])->get();
+        $restaurant = Restaurant::select(['name_ar','name_en'])
+            ->where('id','=',$id)
+            ->first();
         $RestaurantCategories = RestaurantCategory::join('restaurants','restaurantcategories.resturant_id','restaurants.id')
+            ->where('resturant_id','=',$id)
         ->get(['restaurantcategories.*','restaurants.name_ar as re_name_ar','restaurants.name_en as re_name_en']);
-//          dd($RestaurantCategories->toArray());
+
         return view('mealCategory.index')
-            ->with('restaurants',$restaurants)
+            ->with('restaurant_id',$id)
+            ->with('restaurant',$restaurant)
             ->with('RestaurantCategories',$RestaurantCategories);
     }
 
@@ -33,10 +37,10 @@ class MealCategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(MealCategoryRequest $request)
+    public function store(Request $request,$id)
     {
         RestaurantCategory::create([
-            'resturant_id'=>$request->restaurant_id,
+            'resturant_id'=>$id,
             'name_ar'=>$request->name_ar,
             'name_en'=>$request->name_en,
         ]);
@@ -57,7 +61,6 @@ class MealCategoryController extends Controller
         $RestaurantCategory->update([
             'name_ar'=>$request->name_ar,
             'name_en'=>$request->name_en,
-            'resturant_id'=>$request->restaurant_id,
         ]);
         return redirect()->back()->with(['success_title' => __('main.success_title'),
             'update_msg_Category_Meal' => __('main.update_msg_Category_Meal')]);

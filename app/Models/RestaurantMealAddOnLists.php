@@ -12,7 +12,7 @@ class RestaurantMealAddOnLists extends Model
     use SoftDeletes;
     protected $table = 'restaurantaddonlists';
     protected $fillable = [
-        'id','resturant_id','name_ar','type','created_at','updated_at','deleted_at'
+        'id','resturant_id','name_ar','name_en','type','created_at','updated_at','deleted_at'
     ];
 
 }

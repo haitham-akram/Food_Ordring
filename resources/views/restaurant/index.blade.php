@@ -42,13 +42,10 @@
                                                 <th class = "text-center">{{ __('main.id') }}</th>
                                                 <th class = "text-center">{{ __('main.logo') }}</th>
                                                 <th class = "text-center">{{ __('main.cover_image') }}</th>
-                                                <th class = "text-center">{{ __('main.name_ar') }}</th>
-                                                <th class = "text-center">{{ __('main.name_en') }}</th>
+                                                <th class = "text-center">{{ __('main.name') }}</th>
                                                 <th class = "text-center">{{ __('main.category') }}</th>
-                                                <th class = "text-center">{{ __('main.latitude') }}</th>
-                                                <th class = "text-center">{{ __('main.longitude') }}</th>
                                                 <th class = "text-center">{{ __('main.status') }}</th>
-                                                <th class = "text-center">{{ __('main.created_at') }}</th>
+                                                <th class = "text-center">{{ __('main.restaurant_details') }}</th>
                                                 <th class = "text-center">{{ __('main.actions') }}</th>
                                             </tr>
                                             </thead>
@@ -56,10 +53,16 @@
                                             @foreach($restaurants as $restaurant)
                                                 <tr>
                                                     <td class = "text-center">{{$restaurant->id}}</td>
-                                                    <td class = "text-center"> <img style="width:100px; hight:100px" src="{{ $restaurant->logo}}" alt="logo"> </td>
-                                                    <td class = "text-center"> <img style="width:100px; hight:100px" src="{{ $restaurant->cover_image}}" alt="cover_image"> </td>
-                                                    <td class = "text-center">{{$restaurant->name_ar}}</td>
-                                                    <td class = "text-center">{{$restaurant->name_en}}</td>
+                                                    <td class = "text-center"> <img style="width:100px; hight:100px" src="{{asset( $restaurant->logo )}}" alt="logo"> </td>
+                                                    <td class = "text-center"> <img style="width:100px; hight:100px" src="{{ asset($restaurant->cover_image)}}" alt="cover_image"> </td>
+                                                    <td class = "text-center">
+                                                        @if (App::getLocale() == 'en')
+                                                            {{$restaurant->name_en}}
+                                                        @else
+                                                           {{$restaurant->name_ar}}
+                                                        @endif
+                                                    </td>
+
                                                     <td class = "text-center">
                                                         @foreach($categories as $category)
                                                             @if($category->resturant_id == $restaurant->id )
@@ -71,34 +74,59 @@
                                                             @endif
                                                         @endforeach
                                                     </td>
-
-                                                    <td class = "text-center">{{$restaurant->latitude}}</td>
-                                                    <td class = "text-center">{{$restaurant->longitude}}</td>
-
                                                     <td class = "text-center">
                                                         @if($restaurant->status == 1)
                                                             {{__('main.active')}}
                                                         @else
                                                             {{__('main.hidden')}}
                                                         @endif
-                                                        </td>
-                                                    <td class = "text-center">{{$restaurant->created_at}}</td>
+                                                    </td>
                                                     <td class = "text-center">
-                                                                   <span class="dropdown">
-                                                            <button id="SearchDrop2" type="button" data-toggle="dropdown"
-                                                                    aria-haspopup="true" aria-expanded="true"
-                                                                    class="btn btn-warning dropdown-toggle  dropdown-menu-right "><i
-                                                                    class="ft-settings"></i></button>
-                                                            <span aria-labelledby="SearchDrop2"
-                                                                  class="dropdown-menu mt-1 dropdown-menu-left">
-                                                                <a href="{{route('restaurant.edit',$restaurant->id)}}" class="dropdown-item primary">
-                                                                    <i class="ft-edit-2 primary"></i>
-                                                                    {{ __('main.edit') }}</a>
-                                                                <a href="{{route('restaurant.delete',$restaurant->id)}}" class="dropdown-item danger">
-                                                                    <i class="ft-trash-2 danger"></i>
-                                                                    {{ __('main.delete') }}</a>
-                                                            </span>
-                                                        </span>
+                                                        <a href="{{ route('restaurant.edit',$restaurant->id) }}"> <button type="button" class="btn btn-warning btn-sm" ><i class="white"></i>
+                                                                {{ __('main.restaurant_details') }}</button></a>
+                                                    </td>
+
+
+                                                    <td class = "text-center">
+                                                        <a  id="deleteAlert{{$restaurant->id}}" >
+                                                        <button type="button" class="btn btn-warning btn-sm" ><i class="white"></i>
+                                                            {{ __('main.delete') }}</button></a>
+
+                                                                {{--delete sweet alert--}}
+                                                                <script>
+                                                                   document.getElementById('deleteAlert{{$restaurant->id}}').addEventListener('click',function (){
+                                                                       console.log('here');
+                                                                      new swal({
+                                                                           title: "{{__('main.are_you_sure')}}",
+                                                                           text: "{{__('main.text_restaurant_delete')}}",
+                                                                           icon: "warning",
+                                                                           buttons: {
+                                                                               cancel: {
+                                                                                   text: "{{__('main.cancel')}}",
+                                                                                   value: null,
+                                                                                   visible: true,
+                                                                                   className: "",
+                                                                                   closeModal: false,
+                                                                               },
+                                                                               confirm: {
+                                                                                   text: "{{__('main.confirm')}}",
+                                                                                   value: true,
+                                                                                   visible: true,
+                                                                                   className: "",
+                                                                                   closeModal: false
+                                                                               }
+                                                                           }
+                                                                       })
+                                                                           .then((isConfirm) => {
+                                                                               if (isConfirm) {
+                                                                                   location.href ="{{route('restaurant.delete',$restaurant->id)}}";
+                                                                               } else {
+                                                                                   new swal("{{__('main.Cancelled')}}", "{{__('main.Cancelled-text')}}", "error");
+                                                                               }
+                                                                           });
+                                                                   });
+                                                                </script>
+                                                            {{--end of alert--}}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -115,6 +143,11 @@
     </div>
 @endsection
 @section('search js')
+
+
+
+
+
 
     @if (Session::has('delete_msg_Restaurant'))
         @if (App::getLocale() == 'ar')

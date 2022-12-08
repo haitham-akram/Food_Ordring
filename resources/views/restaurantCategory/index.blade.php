@@ -8,7 +8,7 @@
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">{{ __('main.home') }}</a>
+                                <li class="breadcrumb-item"><a href="{{ route('home') }}">{{ __('main.home') }}</a>
                                 </li>
                                 <li class="breadcrumb-item active"><a
                                         href="{{ route('category.restaurant.index') }}">{{ __('main.Restaurant-category-list') }}</a>
@@ -49,7 +49,7 @@
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
-                                                <form action="{{route('store.category.restaurant')}}" method="POST">
+                                                <form action="{{route('store.category.restaurant')}}" method="POST" name="create_form" onsubmit="return validateForm(event)">
                                                     @csrf
                                                     <div class="modal-body">
                                                         <h5><i class="la la-arrow-right"></i>
@@ -59,22 +59,28 @@
                                                         <div class="form-group">
                                                             <fieldset class="form-group">
                                                                 <label>{{ __('main.category-name-ar') }} </label>
-                                                                <input type="text" id="NameOfDeliveryOffice" class="form-control"
+                                                                <input type="text" id="name_ar" class="form-control"
                                                                        placeholder="{{ __('main.category-name-ar') }}"
                                                                        name="name_ar">
                                                                 @error('name_ar')
                                                                 <small  class="form-text text-danger">{{$message}}</small>
                                                                 @enderror
+                                                                <small class="form-text text-danger" id="error_name_ar" style="display: none">
+                                                                    <strong>{{ __('main.category_name_ar_messages') }}</strong></small>
                                                             </fieldset>
+
                                                             <fieldset class="form-group">
                                                                 <label>{{ __('main.category-name-en') }} </label>
-                                                                <input type="text" id="NameOfDeliveryOffice" class="form-control"
+                                                                <input type="text" id="name_en" class="form-control"
                                                                        placeholder="{{ __('main.category-name-en') }}"
                                                                        name="name_en">
                                                                 @error('name_en')
                                                                 <small  class="form-text text-danger">{{$message}}</small>
                                                                 @enderror
+                                                                <small class="form-text text-danger" id="error_name_en" style="display: none">
+                                                                    <strong>{{ __('main.category_name_en_messages') }}</strong></small>
                                                             </fieldset>
+
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -125,8 +131,8 @@
                                                             <span aria-labelledby="SearchDrop2"
                                                                   class="dropdown-menu mt-1 dropdown-menu-left">
                                                                 <a class="dropdown-item primary" data-toggle="modal"
-                                                                   data-target="#edit_form_{{$category->id}}"><i
-                                                                        class="ft-edit-2 primary"></i>
+                                                                   data-target="#edit_form_{{$category->id}}" category_id ={{$category->id}} id="category_edit">
+                                                                    <i class="ft-edit-2 primary" ></i>
                                                                     {{ __('main.edit') }}</a>
                                                                 <a href="{{route('delete.category.restaurant',$category->id)}}" class="dropdown-item danger">
                                                                     <i class="ft-trash-2 danger"></i>
@@ -151,7 +157,7 @@
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
-                                                            <form action="{{route('update.category.restaurant',$category->id)}}" method="POST">
+                                                            <form action="{{route('update.category.restaurant',$category->id)}}" name="form{{$category->id}}" onsubmit="return validateEditForm(event)"  method="POST">
                                                                 @csrf
                                                                 <div class="modal-body">
                                                                     <h5><i class="la la-arrow-right"></i>
@@ -161,21 +167,25 @@
                                                                     <div class="form-group">
                                                                         <fieldset class="form-group">
                                                                             <label>{{ __('main.category-name-ar') }} </label>
-                                                                            <input type="text" id="NameOfDeliveryOffice" class="form-control"
+                                                                            <input type="text" id="name_ar{{$category->id}}" class="form-control"
                                                                                    placeholder="{{ __('main.category-name-ar') }}"
                                                                                    name="name_ar" value="{{$category->name_ar}}">
                                                                             @error('name_ar')
                                                                             <small  class="form-text text-danger">{{$message}}</small>
                                                                             @enderror
+                                                                            <small class="form-text text-danger" id="error_name_ar{{$category->id}}" style="display: none">
+                                                                                <strong>{{ __('main.category_name_ar_messages') }}</strong></small>
                                                                         </fieldset>
                                                                         <fieldset class="form-group">
                                                                             <label>{{ __('main.category-name-en') }} </label>
-                                                                            <input type="text" id="NameOfDeliveryOffice" class="form-control"
+                                                                            <input type="text" id="name_en{{$category->id}}" class="form-control"
                                                                                    placeholder="{{ __('main.category-name-en') }}"
                                                                                    name="name_en" value="{{$category->name_en}}">
                                                                             @error('name_en')
                                                                             <small  class="form-text text-danger">{{$message}}</small>
                                                                             @enderror
+                                                                            <small class="form-text text-danger" id="error_name_en{{$category->id}}" style="display: none">
+                                                                                <strong>{{ __('main.category_name_en_messages') }}</strong></small>
                                                                         </fieldset>
                                                                     </div>
                                                                 </div>
@@ -208,8 +218,11 @@
             </div>
         </div>
     </div>
+
 @endsection
 @section('search js')
+    @include('includes.restaurantCategoryValidation')
+    @include('includes.restaurantCategoryEditValidation')
     {{--    create--}}
     @if (Session::has('create_msg_type'))
         @if (App::getLocale() == 'ar')

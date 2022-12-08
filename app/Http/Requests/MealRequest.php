@@ -32,6 +32,8 @@ class MealRequest extends FormRequest
             'image'=>'required',
             'meal_category'=>'required',
             'image_edit'=>'nullable',
+            'Adds_on_category_id'=>'nullable',
+
         ];
     }
     public function messages()
